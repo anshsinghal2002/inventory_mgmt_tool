@@ -1,0 +1,45 @@
+"""
+A catalogue that stores all the products and their details. Any item added to the inventory will only store a product id, and information regarding the product will require a lookup through a given catalogue.
+"""
+class ProductCatalogue:
+
+    def __init__(self):
+        """
+        Initialize a new product catalogue.
+        """
+        self.products = {}
+
+    def add_product_type(self, product_type):
+        """
+        Add a product type to the catalogue.
+
+        Args:
+        product_type (ProductType): The product type to add.
+        """
+        self.products[product_type.productID] = product_type
+
+    def lookup(self, productID):
+        """
+        Look up a product type by its product ID.
+
+        Args:
+        productID (str): The product ID to look up.
+
+        Returns:
+        ProductType: The product type associated with the provided ID.
+        """
+        return self.products.get(productID, None)
+    
+    def getBestBeforeDays(self,productID):
+        """
+        Get the best before days for a specific product type by its product ID.
+
+        Args:
+        productID (str): The product ID to look up.
+
+        Returns:
+        int: The best before days for the product, if available.
+        """
+
+        return self.lookup(productID).bestBeforeDays
+    

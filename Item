@@ -1,0 +1,32 @@
+from datetime import datetime, timedelta
+
+"""
+The actual items in the inventory
+"""
+class Item:
+    def __init__(self, productID, mfd):
+        """
+        Initialize a new item linked to a specific product type.
+
+        Args:
+        mfd (dateTime): Manufacturing date for the item.
+        productID (str): Identifier for the product type this item is based on.
+        """
+        self.mfd = mfd
+        self.productID = productID
+        self.expiryDate = None
+
+    def calculate_expiry_date(self, catalogue):
+        """
+        Calculate the expiry date of the item based on its manufacturing date and best before days from the catalogue.
+
+        Args:
+        catalogue (ProductCatalogue): Catalogue to use for looking up the best before days.
+
+        Returns:
+        datetime: The calculated expiry date.
+        """
+        best_before_days = catalogue.get_best_before_days(self.productID)
+        if best_before_days is not None:
+            self.expiryDate = self.mfd + timedelta(days=best_before_days)
+        return self.expiryDate

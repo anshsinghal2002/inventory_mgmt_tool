@@ -1,0 +1,18 @@
+class ProductType:
+    def __init__(self, productID, productName, productDescription, retailPrice, brand, bestBeforeDays):
+        """
+        Initialize a new product type with essential details.
+
+        Args:
+        productID (str): Unique identifier for the product type.
+        productName (str): Name of the product type.
+        productDescription (str): Description of the product type.
+        retailPrice (float): Retail price for the product type.
+        brand (str): Brand of the product type.
+        """
+        self.productID = productID
+        self.productName = productName
+        self.productDescription = productDescription
+        self.retailPrice = retailPrice
+        self.brand = brand
+        self.bestBeforeDays = bestBeforeDays

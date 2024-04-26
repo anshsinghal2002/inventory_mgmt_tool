@@ -15,6 +15,7 @@ class Item:
         self.mfd = mfd
         self.productID = productID
         self.expiryDate = None
+        self.calculate_expiry_date()
 
     def calculate_expiry_date(self, catalogue):
         """

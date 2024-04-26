@@ -1,0 +1,81 @@
+from datetime import datetime
+import uuid
+
+class TransactionLedger:
+    def __init__(self, inventory):
+        """
+        Initialize a new Transaction Ledger with a reference to the inventory.
+
+        Args:
+        inventory (Inventory): The inventory system to be updated with each transaction.
+        """
+        self.inventory = inventory
+        self.transactions = []
+
+    def log_transaction(self, item, sale, units, revenue_per_unit):
+        """
+        Log a new transaction and update the inventory accordingly.
+
+        Args:
+        item (Item): The item involved in the transaction.
+        sale (bool): True if the transaction is a sale, False if it is a purchase.
+        units (int): Number of units involved in the transaction. Positive for purchases, negative for sales.
+        revenue_per_unit (float): Revenue or cost per unit. Positive for sales, negative for purchases.
+        """
+        transaction_id = uuid.uuid4().hex  # Generates a unique transaction ID
+        transaction_date = datetime.now()  # Current date and time of transaction
+        
+        # Update inventory based on the type of transaction
+        item_id = f"{item.productID}_{item.mfd.strftime('%Y%m%d%H%M%S')}"
+        if sale:
+            # Check if inventory has sufficient items for sale
+            if item_id in self.inventory.items and self.inventory.items[item_id][1] >= -units:
+                self.inventory.remove_item(item_id, -units)  # Sales reduce inventory, hence -units
+            else:
+                raise ValueError("Not enough inventory for sale")
+        else:
+            # Purchasing adds items to the inventory
+            self.inventory.add_item(item, units)
+
+        # Record the transaction
+        self.transactions.append({
+            "transactionDate": transaction_date,
+            "transactionID": transaction_id,
+            "item": item,
+            "sale": sale,
+            "units": units,
+            "revenue_per_unit": revenue_per_unit
+        })
+
+    def get_transactions(self):
+        """
+        Retrieve all transactions logged in the ledger.
+
+        Returns:
+        list: A list of dictionaries, each representing a transaction.
+        """
+        return self.transactions
+
+    def calculate_total_revenue(self):
+        """
+        Calculate the total revenue from all sales transactions.
+
+        Returns:
+        float: The total revenue.
+        """
+        total_revenue = sum(
+            t["revenue_per_unit"] * t["units"] for t in self.transactions if t["sale"]
+        )
+        return total_revenue
+
+    def calculate_total_expenditure(self):
+        """
+        Calculate the total expenditure from all purchase transactions.
+
+        Returns:
+        float: The total expenditure.
+        """
+        total_expenditure = sum(
+            t["revenue_per_unit"] * t["units"] for t in self.transactions if not t["sale"]
+        )
+        return total_expenditure

@@ -30,7 +30,7 @@ class ProductCatalogue:
         """
         return self.products.get(productID, None)
     
-    def getBestBeforeDays(self,productID):
+    def get_best_before_days(self,productID):
         """
         Get the best before days for a specific product type by its product ID.
 
@@ -43,3 +43,31 @@ class ProductCatalogue:
 
         return self.lookup(productID).bestBeforeDays
     
+    def list_all_products(self):
+        """
+        List all product types in the catalogue.
+        Returns:
+        list: A list of product IDs and names.
+        """
+        return [(product.productID, product.productName) for product in self.products.values()]
+
+    def remove_product_type(self, productID):
+        """
+        Remove a product type from the catalogue.
+        Args:
+        productID (str): The product ID to remove.
+        """
+        if productID in self.products:
+            del self.products[productID]
+
+    def update_product_type(self, productID, **updates):
+        """
+        Update details for an existing product type.
+        Args:
+        productID (str): The product ID to update.
+        updates (dict): A dictionary of attributes to update.
+        """
+        if productID in self.products:
+            product = self.products[productID]
+            for key, value in updates.items():
+                setattr(product, key, value)

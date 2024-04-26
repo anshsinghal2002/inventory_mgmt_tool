@@ -1,0 +1,71 @@
+from datetime import datetime
+import uuid
+
+class Inventory:
+    def __init__(self, catalogue):
+        """
+        Initialize a new Inventory.
+
+        Args:
+        catalogue (ProductCatalogue): A catalogue of all product types.
+        """
+        self.catalogue = catalogue
+        self.items = {}  # Stores a unique identifier to (Item, quantity)
+
+    def add_item(self, item, quantity):
+        """
+        Add an item with a specific quantity to the inventory. Generates a unique identifier for the item.
+
+        Args:
+        item (Item): The item instance to add.
+        quantity (int): Quantity of the item to add.
+        """
+        item_id = f"{item.productID}_{item.mfd.strftime('%Y%m%d%H%M%S')}"  # Generates a pseudo-unique ID based on productID and mfd
+        if item_id in self.items:
+            self.items[item_id][1] += quantity  # Increment quantity if item already exists
+        else:
+            self.items[item_id] = [item, quantity]
+
+    def remove_item(self, item_id, quantity=None):
+        """
+        Remove a specified quantity of an item, or all of it if quantity is None.
+
+        Args:
+        item_id (str): The unique ID of the item to remove.
+        quantity (int, optional): Quantity to remove. Removes all if None.
+        """
+        if item_id in self.items:
+            if quantity is None or self.items[item_id][1] <= quantity:
+                del self.items[item_id]  # Remove item completely if no quantity specified or quantity exceeds current
+            else:
+                self.items[item_id][1] -= quantity  # Decrement the quantity
+
+    def calculate_total_worth(self):
+        """
+        Calculate the total worth of the inventory.
+
+        Returns:
+        float: The total worth of all items in the inventory.
+        """
+        total = 0
+        for item_id, (item, quantity) in self.items.items():
+            product = self.catalogue.lookup(item.productID)
+            if product:
+                total += product.retailPrice * quantity
+        return total
+
+    def calculate_average_days_to_expiry(self):
+        """
+        Calculate the average days to expiry for all perishable items in the inventory.
+
+        Returns:
+        float: The average days to expiry, or None if no perishable items.
+        """
+        total_days = 0
+        count = 0
+        for item_id, (item, quantity) in self.items.items():
+            if item.expiryDate:
+                expiry_duration = (item.expiryDate - datetime.now()).days
+                total_days += expiry_duration * quantity
+                count += quantity  # Count each unit of the item
+        return total_days / count if count > 0 else None

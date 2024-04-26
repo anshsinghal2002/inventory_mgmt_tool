@@ -1,5 +1,5 @@
 class ProductType:
-    def __init__(self, productID, productName, productDescription, retailPrice, brand, bestBeforeDays):
+    def __init__(self, productID, productName, productDescription, retailPrice, brand, bestBeforeDays, perishable=True):
         """
         Initialize a new product type with essential details.
 
@@ -16,3 +16,4 @@ class ProductType:
         self.retailPrice = retailPrice
         self.brand = brand
         self.bestBeforeDays = bestBeforeDays
+        self.perishable = perishable
